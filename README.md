@@ -108,6 +108,15 @@ npm run dev
 npm run worker
 ```
 
+
+## Vercel deployment notes
+
+- Set `DATABASE_URL` to a production Postgres instance (e.g. Vercel Postgres/Neon/Supabase).
+- Set `REDIS_URL` only if you want queued sync jobs; if omitted, connector sync runs inline (serverless-safe fallback).
+- Set `DEFAULT_WORKSPACE_ID` for initial/demo workspace resolution when no workspace header is provided.
+- Ensure `NEXTAUTH_URL` matches your Vercel production domain and set `NEXTAUTH_SECRET`.
+- Prisma client generation is handled via `postinstall` script (`prisma generate`).
+
 ## Environment variables
 See `.env.example`.
 - `DATABASE_URL`: Postgres connection

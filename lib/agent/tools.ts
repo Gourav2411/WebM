@@ -25,18 +25,22 @@ export async function createCampaignDraft(workspaceId: string, userId: string, p
 }
 
 export async function listCampaignDrafts(workspaceId: string, status?: DraftStatus) {
-  return prisma.campaignDraft.findMany({ where: { workspaceId, status } });
+  return prisma.campaignDraft.findMany({ where: { workspaceId, ...(status ? { status } : {}) } });
 }
 
 export async function requestApproval(workspaceId: string, draftId: string, userId: string) {
-  const draft = await prisma.campaignDraft.update({ where: { id: draftId, workspaceId }, data: { status: DraftStatus.PENDING_APPROVAL } });
+  const draft = await prisma.campaignDraft.findFirst({ where: { id: draftId, workspaceId } });
+  if (!draft) throw new Error("Draft not found");
+  const updated = await prisma.campaignDraft.update({ where: { id: draft.id }, data: { status: DraftStatus.PENDING_APPROVAL } });
   await logAudit(workspaceId, "agent.request_approval", userId, { draftId });
-  return draft;
+  return updated;
 }
 
 export async function executeDraft(workspaceId: string, draftId: string, userId: string, role: Role) {
   if (role === Role.OPERATOR) throw new Error("Operators cannot execute drafts");
-  const draft = await prisma.campaignDraft.update({ where: { id: draftId, workspaceId }, data: { status: DraftStatus.EXECUTED } });
+  const draft = await prisma.campaignDraft.findFirst({ where: { id: draftId, workspaceId } });
+  if (!draft) throw new Error("Draft not found");
+  const updated = await prisma.campaignDraft.update({ where: { id: draft.id }, data: { status: DraftStatus.EXECUTED } });
   await logAudit(workspaceId, "agent.execute_draft", userId, { draftId, mock: true });
-  return { ok: true, draft };
+  return { ok: true, draft: updated };
 }

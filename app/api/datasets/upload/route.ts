@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import { prisma } from "@/lib/prisma";
-
-const workspaceId = "ws_seed";
+import { getWorkspaceId } from "@/lib/workspace";
 
 export async function POST(req: NextRequest) {
+  const workspaceId = getWorkspaceId(req);
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
   if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });

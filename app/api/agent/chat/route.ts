@@ -3,11 +3,11 @@ import OpenAI from "openai";
 import { prisma } from "@/lib/prisma";
 import { AGENT_SYSTEM_PROMPT } from "@/lib/agent/systemPrompt";
 import { createCampaignDraft, getSchema, listCampaignDrafts, requestApproval, runSqlMock } from "@/lib/agent/tools";
-
-const workspaceId = "ws_seed";
-const userId = "seed_user";
+import { getUserContext, getWorkspaceId } from "@/lib/workspace";
 
 export async function POST(req: NextRequest) {
+  const workspaceId = getWorkspaceId(req);
+  const { userId } = getUserContext(req);
   const { message } = await req.json();
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -40,11 +40,29 @@ export async function POST(req: NextRequest) {
     reply += `\nSQL rows: ${result.rows.length}`;
   }
 
-  await prisma.agentConversation.upsert({
-    where: { id: workspaceId },
-    update: { messages: { push: { role: "user", content: message } as never } },
-    create: { id: workspaceId, workspaceId, messages: [{ role: "user", content: message }, { role: "assistant", content: reply }] as never }
-  });
+  const existing = await prisma.agentConversation.findFirst({ where: { workspaceId } });
+  if (!existing) {
+    await prisma.agentConversation.create({
+      data: {
+        workspaceId,
+        messages: [
+          { role: "user", content: message },
+          { role: "assistant", content: reply }
+        ] as never
+      }
+    });
+  } else {
+    await prisma.agentConversation.update({
+      where: { id: existing.id },
+      data: {
+        messages: [
+          ...(existing.messages as Array<{ role: string; content: string }>),
+          { role: "user", content: message },
+          { role: "assistant", content: reply }
+        ] as never
+      }
+    });
+  }
 
   return NextResponse.json({ reply });
 }

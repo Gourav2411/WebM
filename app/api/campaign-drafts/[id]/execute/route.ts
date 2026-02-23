@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Role } from "@prisma/client";
 import { executeDraft } from "@/lib/agent/tools";
-
-const workspaceId = "ws_seed";
+import { getUserContext, getWorkspaceId } from "@/lib/workspace";
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const { userId = "seed_user", role = Role.ADMIN } = await req.json();
+  const workspaceId = getWorkspaceId(req);
+  const { userId, role } = getUserContext(req);
   const result = await executeDraft(workspaceId, params.id, userId, role);
   return NextResponse.json(result);
 }
