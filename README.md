@@ -127,6 +127,17 @@ npm run worker
 
 
 
+
+## Data Management (merge + work + AI analysis)
+
+- Added `/data-management` section to unify datasets from analytics, ads, and CRM sources.
+- Includes merge builder (`left source`, `right source`, `join key`, `dataset name`) to create merged datasets.
+- Includes AI Analysis Studio to run analysis prompts on selected merged datasets and return summary/insights/actions.
+- Powered by mock APIs in current mode:
+  - `GET /api/data-management/sources`
+  - `POST /api/data-management/merge`
+  - `POST /api/data-management/analyze`
+
 ## Advanced Visualization Studio
 
 - Added an expert-level visualization studio on Analytics, Ads, and CRM tabs.

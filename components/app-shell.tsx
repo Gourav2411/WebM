@@ -11,7 +11,8 @@ const tabs = [
   ["/crm", "CRM"],
   ["/cdp", "CDP"],
   ["/observability", "Observability"],
-  ["/settings", "Settings"]
+  ["/settings", "Settings"],
+  ["/data-management", "Data Management"]
 ] as const;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
