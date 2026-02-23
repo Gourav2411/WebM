@@ -126,6 +126,14 @@ npm run worker
 - Prisma client generation is handled via `postinstall` script (`prisma generate`).
 
 
+
+## Advanced Visualization Studio
+
+- Added an expert-level visualization studio on Analytics, Ads, and CRM tabs.
+- Supports dynamic chart type changes (`line`, `bar`, `area`, `pie`), dimension/metric switching, and preset expert dashboards.
+- Users can create their own graphs with custom metric+dimension combinations.
+- User-created graphs are persisted in browser localStorage per module.
+
 ## Settings page (dynamic platform connectors)
 
 - Added a new `/settings` page to configure platform connections dynamically per platform requirements.
