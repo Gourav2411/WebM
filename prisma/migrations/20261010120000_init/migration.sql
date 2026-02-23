@@ -1,0 +1,1 @@
+-- Prisma migration placeholder. Run `npm run prisma:migrate` to apply generated SQL.
