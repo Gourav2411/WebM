@@ -133,6 +133,8 @@ npm run worker
 - Ad platforms included: Google Ads, Meta Ads, LinkedIn Ads, TikTok Ads, Pinterest Ads.
 - Each platform renders required input fields dynamically from a platform schema.
 - Connections are stored via mock endpoint `/api/settings/connections` in current MVP mode.
+- Workspaces can now be created/selected in Settings, and all platform connections are scoped per workspace.
+- Added CRM/CDP connector categories to make the app act as a unified analytics + CDP + marketing activation control plane in mock mode.
 
 ## Environment variables
 See `.env.example`.

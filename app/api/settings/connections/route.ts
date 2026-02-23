@@ -1,16 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-
-export type Connection = {
-  id: string;
-  workspaceId: string;
-  platformKey: string;
-  platformName: string;
-  category: "analytics" | "ads";
-  values: Record<string, string>;
-  createdAt: string;
-};
-
-const store = new Map<string, Connection[]>();
+import { createConnection, listConnections } from "@/lib/mock-store";
+import { allPlatforms } from "@/lib/platform-config";
 
 function getWorkspaceId(req: NextRequest) {
   return req.headers.get("x-workspace-id") || req.nextUrl.searchParams.get("workspaceId") || "ws_seed";
@@ -18,19 +8,26 @@ function getWorkspaceId(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   const workspaceId = getWorkspaceId(req);
-  return NextResponse.json({ connections: store.get(workspaceId) || [] });
+  return NextResponse.json({ connections: listConnections(workspaceId) });
 }
 
 export async function POST(req: NextRequest) {
   const workspaceId = getWorkspaceId(req);
-  const body = (await req.json()) as Omit<Connection, "id" | "workspaceId" | "createdAt">;
-  const connection: Connection = {
-    id: `conn_${Date.now()}`,
-    workspaceId,
-    createdAt: new Date().toISOString(),
-    ...body
+  const body = (await req.json()) as {
+    platformKey: string;
+    platformName: string;
+    category: "analytics" | "ads" | "crm" | "cdp";
+    values: Record<string, string>;
   };
-  const prev = store.get(workspaceId) || [];
-  store.set(workspaceId, [connection, ...prev]);
+
+  const platform = allPlatforms.find((p) => p.key === body.platformKey);
+  if (!platform) return NextResponse.json({ error: "Unknown platform" }, { status: 400 });
+
+  const missing = platform.fields.filter((f) => f.required && !body.values?.[f.key]);
+  if (missing.length > 0) {
+    return NextResponse.json({ error: `Missing required fields: ${missing.map((m) => m.label).join(", ")}` }, { status: 400 });
+  }
+
+  const connection = createConnection({ workspaceId, ...body });
   return NextResponse.json({ ok: true, connection });
 }
