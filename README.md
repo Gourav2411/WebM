@@ -118,11 +118,21 @@ npm run worker
 
 ## Vercel deployment notes
 
+- `vercel.json` pins `framework: "nextjs"` and `outputDirectory: ".next"` to avoid static-output misdetection (e.g. expecting `public`).
 - Set `DATABASE_URL` to a production Postgres instance (e.g. Vercel Postgres/Neon/Supabase).
 - Set `REDIS_URL` only if you want queued sync jobs; if omitted, connector sync runs inline (serverless-safe fallback).
 - Set `DEFAULT_WORKSPACE_ID` for initial/demo workspace resolution when no workspace header is provided.
 - Ensure `NEXTAUTH_URL` matches your Vercel production domain and set `NEXTAUTH_SECRET`.
 - Prisma client generation is handled via `postinstall` script (`prisma generate`).
+
+
+## Settings page (dynamic platform connectors)
+
+- Added a new `/settings` page to configure platform connections dynamically per platform requirements.
+- Analytics platforms included: GA4, Amplitude, Mixpanel, Segment, PostHog.
+- Ad platforms included: Google Ads, Meta Ads, LinkedIn Ads, TikTok Ads, Pinterest Ads.
+- Each platform renders required input fields dynamically from a platform schema.
+- Connections are stored via mock endpoint `/api/settings/connections` in current MVP mode.
 
 ## Environment variables
 See `.env.example`.

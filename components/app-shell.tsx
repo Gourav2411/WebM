@@ -10,7 +10,8 @@ const tabs = [
   ["/files", "Files"],
   ["/crm", "CRM"],
   ["/cdp", "CDP"],
-  ["/observability", "Observability"]
+  ["/observability", "Observability"],
+  ["/settings", "Settings"]
 ] as const;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
