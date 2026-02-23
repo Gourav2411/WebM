@@ -109,6 +109,13 @@ npm run worker
 ```
 
 
+## Mock mode (current default)
+
+- External integrations are temporarily disabled. API endpoints for auth/agent/connectors/drafts/uploads return mock responses.
+- Dashboard pages use large in-repo mock datasets so the app can render without database access.
+- For Vercel preview/build validation, this avoids runtime failures when `DATABASE_URL` is not configured yet.
+- Auth and connector endpoints run in mock mode until real integrations are re-enabled.
+
 ## Vercel deployment notes
 
 - Set `DATABASE_URL` to a production Postgres instance (e.g. Vercel Postgres/Neon/Supabase).
@@ -119,7 +126,7 @@ npm run worker
 
 ## Environment variables
 See `.env.example`.
-- `DATABASE_URL`: Postgres connection
+- `DATABASE_URL`: Postgres connection (optional while running in mock-only mode)
 - `REDIS_URL`: Redis connection for BullMQ
 - `NEXTAUTH_SECRET`, OAuth keys
 - `ENCRYPTION_KEY`: key for encrypting connector tokens at rest

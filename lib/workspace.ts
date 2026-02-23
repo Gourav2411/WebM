@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { Role } from "@prisma/client";
+
+export type UserRole = "OWNER" | "ADMIN" | "ANALYST" | "OPERATOR";
 
 export function getWorkspaceId(req: NextRequest): string {
   return (
@@ -10,9 +11,10 @@ export function getWorkspaceId(req: NextRequest): string {
   );
 }
 
-export function getUserContext(req: NextRequest): { userId: string; role: Role } {
+export function getUserContext(req: NextRequest): { userId: string; role: UserRole } {
   const userId = req.headers.get("x-user-id") || "seed_user";
-  const roleHeader = req.headers.get("x-user-role") || "ADMIN";
-  const role = Object.values(Role).includes(roleHeader as Role) ? (roleHeader as Role) : Role.ADMIN;
+  const roleHeader = (req.headers.get("x-user-role") || "ADMIN") as UserRole;
+  const allowed: UserRole[] = ["OWNER", "ADMIN", "ANALYST", "OPERATOR"];
+  const role = allowed.includes(roleHeader) ? roleHeader : "ADMIN";
   return { userId, role };
 }

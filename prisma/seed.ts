@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -13,8 +13,8 @@ async function main() {
 
   await prisma.workspaceMember.upsert({
     where: { workspaceId_userId: { workspaceId: workspace.id, userId: user.id } },
-    update: { role: Role.OWNER },
-    create: { workspaceId: workspace.id, userId: user.id, role: Role.OWNER }
+    update: { role: "OWNER" as never },
+    create: { workspaceId: workspace.id, userId: user.id, role: "OWNER" as never }
   });
 
   await prisma.customer.createMany({

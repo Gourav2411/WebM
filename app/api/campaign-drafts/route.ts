@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getWorkspaceId } from "@/lib/workspace";
+
+const mockDrafts = Array.from({ length: 10 }).map((_, i) => ({
+  id: `draft_${i + 1}`,
+  platform: i % 2 === 0 ? "google_ads" : "meta_ads",
+  status: i % 3 === 0 ? "PENDING_APPROVAL" : "DRAFT"
+}));
 
 export async function GET(req: NextRequest) {
-  const workspaceId = getWorkspaceId(req);
-  const status = req.nextUrl.searchParams.get("status") || undefined;
-  const drafts = await prisma.campaignDraft.findMany({ where: { workspaceId, ...(status ? { status: status as never } : {}) } });
-  return NextResponse.json(drafts);
+  const status = req.nextUrl.searchParams.get("status");
+  return NextResponse.json(status ? mockDrafts.filter((d) => d.status === status) : mockDrafts);
 }
