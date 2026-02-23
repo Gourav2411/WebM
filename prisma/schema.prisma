@@ -192,6 +192,7 @@ model Customer {
   attributes      Json
   workspace       Workspace @relation(fields: [workspaceId], references: [id])
   events          NormalizedEvent[]
+  identities      IdentityMap[]
 }
 
 model IdentityMap {
